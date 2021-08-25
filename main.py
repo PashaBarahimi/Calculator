@@ -2,6 +2,7 @@ from tkinter import *
 from enum import Enum
 import tkinter.messagebox
 from calc import *
+import plaform
 
 # ==================== DarkMode Variables ===================
 IsDark = True
@@ -18,7 +19,7 @@ root.geometry("400x550")
 root.minsize(400, 550)
 root.title("Calculator")
 root.configure(bg=ColorCodes[14])
-root.iconbitmap("./assets/icon.ico")
+root.iconbitmap("./assets/" + ("icon.ico" if plaform.system() == "Windows" else "icon.bmp"))
 Widgets.append(root)
 
 # ========================== Frames ==========================
