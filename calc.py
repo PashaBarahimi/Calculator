@@ -9,7 +9,7 @@ ValidChars = ValidNumbers + ValidOperators + Parenthesis
 class Calculator:
 
     def __init__(self):
-        self._expression: list[str, ...] = list()  # List of characters
+        self._expression: list[str] = list()  # List of characters
 
     @staticmethod
     def _add(first: float, second: float) -> float:
@@ -32,14 +32,15 @@ class Calculator:
 
     @staticmethod
     def _power(num: float, power: float) -> float:
-        if num < 0 and int(power) != power:
-            raise ValueError("Negative number to the power of non-integer number!")
+        if num < 0 and not power.is_integer():
+            raise ValueError(
+                "Negative number to the power of non-integer number!")
 
         return num ** power
 
     @staticmethod
     def _sqrt(root: float, num: float) -> float:
-        if num < 0 and (int(root) != root or int(root) % 2 == 0):
+        if num < 0 and (not root.is_integer() or int(root) % 2 == 0):
             raise ValueError("Invalid root for negative argument!")
 
         if root == 0:
@@ -101,9 +102,11 @@ class Calculator:
                     elif self._expression[i - 1] in ValidNumbers:
                         return i + 1
                     else:
-                        raise ValueError("Something went wrong in finding operator's previous number!")
+                        raise ValueError(
+                            "Something went wrong in finding operator's previous number!")
             else:
-                raise ValueError("Something went wrong in finding operator's previous number!")
+                raise ValueError(
+                    "Something went wrong in finding operator's previous number!")
 
         else:
             return location[0]
@@ -126,14 +129,15 @@ class Calculator:
             elif not has_met_number and temp_char == '-':
                 continue
             else:
-                raise ValueError("Something went wrong in finding operator's next number!")
+                raise ValueError(
+                    "Something went wrong in finding operator's next number!")
 
         else:
             return location[1]
 
     def _replace_calculated(self, location: tuple[int, int], calculated_expression: str) -> None:
         new_expression = self._expression[:location[0]] + list(calculated_expression) + self._expression[
-                                                                                        location[1] + 1:]
+            location[1] + 1:]
         self._expression = new_expression
 
     @staticmethod
@@ -146,9 +150,12 @@ class Calculator:
                                function: Callable[[float, float], float]) -> None:
         first_index = self._find_previous_number_index(index, location)
         last_index = self._find_next_number_index(index, location)
-        first_num = Calculator._convert_to_float("".join(self._expression[first_index:index]))
-        second_num = Calculator._convert_to_float("".join(self._expression[index + 1:last_index + 1]))
-        self._replace_calculated((first_index, last_index), str(function(first_num, second_num)))
+        first_num = Calculator._convert_to_float(
+            "".join(self._expression[first_index:index]))
+        second_num = Calculator._convert_to_float(
+            "".join(self._expression[index + 1:last_index + 1]))
+        self._replace_calculated((first_index, last_index), str(
+            function(first_num, second_num)))
 
     def _solve_first_order_operators(self, location: tuple[int, int]) -> None:
         negative_end = location[1] - len(self._expression)
@@ -158,10 +165,12 @@ class Calculator:
             while i <= positive_end:
                 temp_char = self._expression[i]
                 if temp_char == '^':
-                    self._calculate_and_replace(i, (location[0], positive_end), Calculator._power)
+                    self._calculate_and_replace(
+                        i, (location[0], positive_end), Calculator._power)
                     break
                 elif temp_char == '√':
-                    self._calculate_and_replace(i, (location[0], positive_end), Calculator._sqrt)
+                    self._calculate_and_replace(
+                        i, (location[0], positive_end), Calculator._sqrt)
                     break
 
                 i += 1
@@ -176,13 +185,16 @@ class Calculator:
             while i <= positive_end:
                 temp_char = self._expression[i]
                 if temp_char == '*':
-                    self._calculate_and_replace(i, (location[0], positive_end), Calculator._multiply)
+                    self._calculate_and_replace(
+                        i, (location[0], positive_end), Calculator._multiply)
                     break
                 elif temp_char == '/':
-                    self._calculate_and_replace(i, (location[0], positive_end), Calculator._divide)
+                    self._calculate_and_replace(
+                        i, (location[0], positive_end), Calculator._divide)
                     break
                 elif temp_char == '%':
-                    self._calculate_and_replace(i, (location[0], positive_end), Calculator._mod)
+                    self._calculate_and_replace(
+                        i, (location[0], positive_end), Calculator._mod)
                     break
 
                 i += 1
@@ -197,11 +209,13 @@ class Calculator:
             while i <= positive_end:
                 temp_char = self._expression[i]
                 if temp_char == '+' and i != location[0] and self._expression[i - 1] != 'e':
-                    self._calculate_and_replace(i, (location[0], positive_end), Calculator._add)
+                    self._calculate_and_replace(
+                        i, (location[0], positive_end), Calculator._add)
                     break
                 elif temp_char == '-' and i != location[0] and self._expression[i - 1] in ValidNumbers and \
                         self._expression[i - 1] != 'e':
-                    self._calculate_and_replace(i, (location[0], positive_end), Calculator._subtract)
+                    self._calculate_and_replace(
+                        i, (location[0], positive_end), Calculator._subtract)
                     break
 
                 i += 1
@@ -218,24 +232,30 @@ class Calculator:
 
             negative_new_end = new_location[1] - len(self._expression)
             self._solve((new_location[0] + 1, new_location[1] - 1))
-            del self._expression[new_location[0]], self._expression[negative_new_end]
+            del self._expression[new_location[0]
+                                 ], self._expression[negative_new_end]
 
-        self._solve_first_order_operators((location[0], negative_end + len(self._expression)))  # ^, √
-        self._solve_second_order_operators((location[0], negative_end + len(self._expression)))  # %, *, /
-        self._solve_third_order_operators((location[0], negative_end + len(self._expression)))  # +, -
+        self._solve_first_order_operators(
+            (location[0], negative_end + len(self._expression)))  # ^, √
+        self._solve_second_order_operators(
+            (location[0], negative_end + len(self._expression)))  # %, *, /
+        self._solve_third_order_operators(
+            (location[0], negative_end + len(self._expression)))  # +, -
 
     @staticmethod
     def _check_validation(expression: str) -> str:
         expression = expression.rstrip("".join(ValidOperators + (' ',)))
         if expression.count(Parenthesis[0]) < expression.count(Parenthesis[1]):
             raise ValueError("Closing parenthesis more than opening ones!")
-        expression += Parenthesis[1] * (expression.count(Parenthesis[0]) - expression.count(Parenthesis[1]))
+        expression += Parenthesis[1] * (expression.count(
+            Parenthesis[0]) - expression.count(Parenthesis[1]))
 
         return expression
 
     def calculate(self, expression: str) -> tuple[float, str]:
         valid_expression = Calculator._check_validation(expression)
-        self._expression = list(filter(lambda char: char != ' ', valid_expression))
+        self._expression = list(
+            filter(lambda char: char != ' ', valid_expression))
         self._solve((0, len(self._expression) - 1))
         answer = Calculator._convert_to_float("".join(self._expression))
         return answer, f"{valid_expression} ="

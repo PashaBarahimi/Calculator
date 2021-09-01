@@ -1,7 +1,6 @@
-from tkinter import *
+from tkinter import Tk, Frame, StringVar, Label, Entry, Button, Canvas, PhotoImage, constants, messagebox
 from enum import Enum
-import tkinter.messagebox
-from calc import *
+from calc import Calculator, ValidOperators
 import platform
 
 # ==================== DarkMode Variables ===================
@@ -39,10 +38,10 @@ labelStr = StringVar(value="")
 textboxStr = StringVar(value="0")
 
 # =========================== Texts ===========================
-label = Label(texts, anchor=W, textvariable=labelStr, font=(
+label = Label(texts, anchor=constants.W, textvariable=labelStr, font=(
     "Cascadia Code", 8), bg=ColorCodes[14], fg=ColorCodes[0])
 label.place(relwidth=0.9, relheight=0.25, relx=0.05, rely=0.1)
-textbox = Entry(texts, textvariable=textboxStr, font=("Cascadia Mono", 20), state=DISABLED, relief=FLAT,
+textbox = Entry(texts, textvariable=textboxStr, font=("Cascadia Mono", 20), state=constants.DISABLED, relief=constants.FLAT,
                 disabledbackground=ColorCodes[14], disabledforeground=ColorCodes[0])
 textbox.place(relwidth=0.9, relheight=0.35, relx=0.05, rely=0.45)
 Widgets.append(label)
@@ -95,12 +94,12 @@ def calculate():
     try:
         answer, valid_expression = calculator.calculate(expression)
     except ValueError as err:
-        tkinter.messagebox.showerror("Value Error!", str(err))
+        messagebox.showerror("Value Error!", str(err))
     except Exception as err:
-        tkinter.messagebox.showerror("Something Went Wrong!", str(err))
+        messagebox.showerror("Something Went Wrong!", str(err))
     else:
         labelStr.set(valid_expression)
-        if int(answer) == answer and 'e' not in str(answer):
+        if answer.is_integer() and 'e' not in str(answer):
             answer = int(answer)
         textboxStr.set(str(answer))
     finally:
@@ -249,8 +248,8 @@ placeCNF = {
 btnCNF = {
     "font": ("Cascadia Code", 15),
     "activebackground": "#a6a6a6",
-    "relief": FLAT,
-    "overrelief": RIDGE,
+    "relief": constants.FLAT,
+    "overrelief": constants.RIDGE,
     "bg": ColorCodes[14],
     "fg": ColorCodes[0]
 }
@@ -259,54 +258,78 @@ ColumnNum = (0.04, 0.28, 0.52, 0.76)
 RowNum = (0.1025, 0.25, 0.3975, 0.545, 0.6925, 0.84)
 
 # ========================== Buttons ==========================
-clearBtn = Button(buttons, btnCNF, text='C', command=lambda: clear_pressed(True))
+clearBtn = Button(buttons, btnCNF, text='C',
+                  command=lambda: clear_pressed(True))
 clearBtn.place(placeCNF, relx=ColumnNum[0], rely=RowNum[0])
-openParenthesisBtn = Button(buttons, btnCNF, text='(', command=lambda: parenthesis_pressed(True))
+openParenthesisBtn = Button(
+    buttons, btnCNF, text='(', command=lambda: parenthesis_pressed(True))
 openParenthesisBtn.place(placeCNF, relx=ColumnNum[1], rely=RowNum[0])
-closeParenthesisBtn = Button(buttons, btnCNF, text=')', command=lambda: parenthesis_pressed(False))
+closeParenthesisBtn = Button(buttons, btnCNF, text=')',
+                             command=lambda: parenthesis_pressed(False))
 closeParenthesisBtn.place(placeCNF, relx=ColumnNum[2], rely=RowNum[0])
-backspaceBtn = Button(buttons, btnCNF, text='⌫', command=lambda: clear_pressed(False))
+backspaceBtn = Button(buttons, btnCNF, text='⌫',
+                      command=lambda: clear_pressed(False))
 backspaceBtn.place(placeCNF, relx=ColumnNum[3], rely=RowNum[0])
-rootBtn = Button(buttons, btnCNF, text='(r)√x', command=lambda: operator_pressed('√'))
+rootBtn = Button(buttons, btnCNF, text='(r)√x',
+                 command=lambda: operator_pressed('√'))
 rootBtn.place(placeCNF, relx=ColumnNum[0], rely=RowNum[1])
-powerBtn = Button(buttons, btnCNF, text='xⁿ', command=lambda: operator_pressed('^'))
+powerBtn = Button(buttons, btnCNF, text='xⁿ',
+                  command=lambda: operator_pressed('^'))
 powerBtn.place(placeCNF, relx=ColumnNum[1], rely=RowNum[1])
-modBtn = Button(buttons, btnCNF, text='mod', command=lambda: operator_pressed('%'))
+modBtn = Button(buttons, btnCNF, text='mod',
+                command=lambda: operator_pressed('%'))
 modBtn.place(placeCNF, relx=ColumnNum[2], rely=RowNum[1])
-divideBtn = Button(buttons, btnCNF, text='÷', command=lambda: operator_pressed('/'))
+divideBtn = Button(buttons, btnCNF, text='÷',
+                   command=lambda: operator_pressed('/'))
 divideBtn.place(placeCNF, relx=ColumnNum[3], rely=RowNum[1])
-multiplyBtn = Button(buttons, btnCNF, text='×', command=lambda: operator_pressed('*'))
+multiplyBtn = Button(buttons, btnCNF, text='×',
+                     command=lambda: operator_pressed('*'))
 multiplyBtn.place(placeCNF, relx=ColumnNum[3], rely=RowNum[2])
-minusBtn = Button(buttons, btnCNF, text='-', command=lambda: operator_pressed('-'))
+minusBtn = Button(buttons, btnCNF, text='-',
+                  command=lambda: operator_pressed('-'))
 minusBtn.place(placeCNF, relx=ColumnNum[3], rely=RowNum[3])
-sumBtn = Button(buttons, btnCNF, text='+', command=lambda: operator_pressed('+'))
+sumBtn = Button(buttons, btnCNF, text='+',
+                command=lambda: operator_pressed('+'))
 sumBtn.place(placeCNF, relx=ColumnNum[3], rely=RowNum[4])
-resultBtn = Button(buttons, btnCNF, text='=', command=lambda: operator_pressed('='))
+resultBtn = Button(buttons, btnCNF, text='=',
+                   command=lambda: operator_pressed('='))
 resultBtn.place(placeCNF, relx=ColumnNum[3], rely=RowNum[5])
 
-num9Btn = Button(buttons, btnCNF, text='9', command=lambda: number_pressed('9'))
+num9Btn = Button(buttons, btnCNF, text='9',
+                 command=lambda: number_pressed('9'))
 num9Btn.place(placeCNF, relx=ColumnNum[2], rely=RowNum[2])
-num8Btn = Button(buttons, btnCNF, text='8', command=lambda: number_pressed('8'))
+num8Btn = Button(buttons, btnCNF, text='8',
+                 command=lambda: number_pressed('8'))
 num8Btn.place(placeCNF, relx=ColumnNum[1], rely=RowNum[2])
-num7Btn = Button(buttons, btnCNF, text='7', command=lambda: number_pressed('7'))
+num7Btn = Button(buttons, btnCNF, text='7',
+                 command=lambda: number_pressed('7'))
 num7Btn.place(placeCNF, relx=ColumnNum[0], rely=RowNum[2])
-num6Btn = Button(buttons, btnCNF, text='6', command=lambda: number_pressed('6'))
+num6Btn = Button(buttons, btnCNF, text='6',
+                 command=lambda: number_pressed('6'))
 num6Btn.place(placeCNF, relx=ColumnNum[2], rely=RowNum[3])
-num5Btn = Button(buttons, btnCNF, text='5', command=lambda: number_pressed('5'))
+num5Btn = Button(buttons, btnCNF, text='5',
+                 command=lambda: number_pressed('5'))
 num5Btn.place(placeCNF, relx=ColumnNum[1], rely=RowNum[3])
-num4Btn = Button(buttons, btnCNF, text='4', command=lambda: number_pressed('4'))
+num4Btn = Button(buttons, btnCNF, text='4',
+                 command=lambda: number_pressed('4'))
 num4Btn.place(placeCNF, relx=ColumnNum[0], rely=RowNum[3])
-num3Btn = Button(buttons, btnCNF, text='3', command=lambda: number_pressed('3'))
+num3Btn = Button(buttons, btnCNF, text='3',
+                 command=lambda: number_pressed('3'))
 num3Btn.place(placeCNF, relx=ColumnNum[2], rely=RowNum[4])
-num2Btn = Button(buttons, btnCNF, text='2', command=lambda: number_pressed('2'))
+num2Btn = Button(buttons, btnCNF, text='2',
+                 command=lambda: number_pressed('2'))
 num2Btn.place(placeCNF, relx=ColumnNum[1], rely=RowNum[4])
-num1Btn = Button(buttons, btnCNF, text='1', command=lambda: number_pressed('1'))
+num1Btn = Button(buttons, btnCNF, text='1',
+                 command=lambda: number_pressed('1'))
 num1Btn.place(placeCNF, relx=ColumnNum[0], rely=RowNum[4])
-num0Btn = Button(buttons, btnCNF, text='0', command=lambda: number_pressed('0'))
+num0Btn = Button(buttons, btnCNF, text='0',
+                 command=lambda: number_pressed('0'))
 num0Btn.place(placeCNF, relx=ColumnNum[1], rely=RowNum[5])
-pointBtn = Button(buttons, btnCNF, text='.', command=lambda: number_pressed('.'))
+pointBtn = Button(buttons, btnCNF, text='.',
+                  command=lambda: number_pressed('.'))
 pointBtn.place(placeCNF, relx=ColumnNum[2], rely=RowNum[5])
-plusOrMinusBtn = Button(buttons, btnCNF, text='+/-', command=lambda: plus_or_minus_pressed())
+plusOrMinusBtn = Button(buttons, btnCNF, text='+/-',
+                        command=lambda: plus_or_minus_pressed())
 plusOrMinusBtn.place(placeCNF, relx=ColumnNum[0], rely=RowNum[5])
 
 Widgets += [clearBtn, openParenthesisBtn, closeParenthesisBtn, backspaceBtn, rootBtn, powerBtn, modBtn, divideBtn,
@@ -396,7 +419,7 @@ def switch_mode() -> None:
 # ============================================================
 def button_pressed(event) -> None:
     if type(event.widget) is Button:
-        event.widget.config(relief=FLAT)
+        event.widget.config(relief=constants.FLAT)
     elif type(event.widget) is Canvas:
         global IsChangingMode
         IsChangingMode = True
