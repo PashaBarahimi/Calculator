@@ -7,8 +7,8 @@ import platform
 IsDark = True
 IsChangingMode = False
 DisplayState = 14
-ColorCodes = ["#F0F0F0", "#E2E2E2", "#D3D3D3", "#C5C5C5", "#B7B7B7", "#A9A9A9", "#9A9A9A", "#8C8C8C", "#7E7E7E",
-              "#6F6F6F", "#616161", "#535353", "#454545", "#363636", "#282828"]
+ColorCodes = ("#F0F0F0", "#E2E2E2", "#D3D3D3", "#C5C5C5", "#B7B7B7", "#A9A9A9", "#9A9A9A", "#8C8C8C", "#7E7E7E",
+              "#6F6F6F", "#616161", "#535353", "#454545", "#363636", "#282828")
 SwitchImages = []
 Widgets = []
 
